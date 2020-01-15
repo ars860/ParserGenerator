@@ -176,7 +176,14 @@ public class ParserGenerator extends Generator {
         List<Option> options = rule.getOptions();
         List<Set<String>> optionsFirsts = new ArrayList<>();
         for (final Option option : options) {
-            optionsFirsts.add(grammar.calcFirstForOption(option));
+            Set<String> curOptionFirst = grammar.calcFirstForOption(option);
+
+            if (curOptionFirst.contains(grammar.getEPSILON())) {
+                curOptionFirst.remove(grammar.getEPSILON());
+                curOptionFirst.addAll(grammar.getFollow().get(rule.getName()));
+            }
+
+            optionsFirsts.add(curOptionFirst);
         }
 
         if (new HashSet<>(optionsFirsts).size() != optionsFirsts.size()) {
@@ -189,13 +196,6 @@ public class ParserGenerator extends Generator {
         for (int i = 0; i < options.size(); i++) {
             Option option = options.get(i);
             Set<String> first = optionsFirsts.get(i);
-
-            if (first.contains(grammar.getEPSILON())) {
-                first.remove(grammar.getEPSILON());
-                for (final String tokenName : grammar.getFollow().get(rule.getName())) {
-                    writeString("case " + tokenName + ":", 3);
-                }
-            }
 
             for (final String tokenName : first) {
                 writeString("case " + tokenName + ":", 3);
