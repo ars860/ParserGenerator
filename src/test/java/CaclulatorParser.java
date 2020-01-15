@@ -74,16 +74,16 @@ public class CaclulatorParser {
         nextToken();
     }
 
-    static class unaryContext {
+    static class UnaryContext {
         private Integer val;
         private Node node;
     
-        unaryContext(Integer returns, Node node) {
+        UnaryContext(Integer returns, Node node) {
             this.node = node;
             this.val = returns;
         }
     
-        public Integer getval() {
+        public Integer getVal() {
             return val;
         }
     
@@ -92,49 +92,49 @@ public class CaclulatorParser {
         }
     }
 
-    public unaryContext unary() throws CaclulatorParserException {
+    public UnaryContext unary() throws CaclulatorParserException {
         Integer val;
         switch (curToken.getName()) {
             case LP:
             {
                 CaclulatorLexer.Token l = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.LP);
-                startContext mid = start();
+                StartContext mid = start();
                 CaclulatorLexer.Token r = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.RP);
                 val = mid.res;
-                return new unaryContext(val, new NodeRule("unary", mid.node));
+                return new UnaryContext(val, new NodeRule("unary", mid.node));
             }
             case NUMBER:
             {
                 CaclulatorLexer.Token num = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.NUMBER);
                 val = Integer.valueOf(num.getText());
-                return new unaryContext(val, new NodeRule("unary", new NodeToken(num)));
+                return new UnaryContext(val, new NodeRule("unary", new NodeToken(num)));
             }
             case MINUS:
             {
                 CaclulatorLexer.Token m = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.MINUS);
-                unaryContext rest = unary();
+                UnaryContext rest = unary();
                 val = -1 * rest.val;
-                return new unaryContext(val, new NodeRule("unary", rest.node));
+                return new UnaryContext(val, new NodeRule("unary", rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: NUMBER or LP or MINUS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class powContContext {
+    static class PowContContext {
         private Integer val;
         private Node node;
     
-        powContContext(Integer returns, Node node) {
+        PowContContext(Integer returns, Node node) {
             this.node = node;
             this.val = returns;
         }
     
-        public Integer getval() {
+        public Integer getVal() {
             return val;
         }
     
@@ -143,7 +143,7 @@ public class CaclulatorParser {
         }
     }
 
-    public powContContext powCont() throws CaclulatorParserException {
+    public PowContContext powCont() throws CaclulatorParserException {
         Integer val;
         switch (curToken.getName()) {
             case DIV:
@@ -154,32 +154,32 @@ public class CaclulatorParser {
             case PLUS:
             {
                 val = 1;
-                return new powContContext(val, new NodeRule("powCont"));
+                return new PowContContext(val, new NodeRule("powCont"));
             }
             case POW:
             {
                 CaclulatorLexer.Token p = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.POW);
-                unaryContext first = unary();
-                powContContext rest = powCont();
+                UnaryContext first = unary();
+                PowContContext rest = powCont();
                 val = (int) Math.pow(first.val.doubleValue(), rest.val.doubleValue());
-                return new powContContext(val, new NodeRule("powCont", first.node, rest.node));
+                return new PowContContext(val, new NodeRule("powCont", first.node, rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: EPS or POW, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class multDivContext {
+    static class MultDivContext {
         private Integer val;
         private Node node;
     
-        multDivContext(Integer returns, Node node) {
+        MultDivContext(Integer returns, Node node) {
             this.node = node;
             this.val = returns;
         }
     
-        public Integer getval() {
+        public Integer getVal() {
             return val;
         }
     
@@ -188,33 +188,33 @@ public class CaclulatorParser {
         }
     }
 
-    public multDivContext multDiv() throws CaclulatorParserException {
+    public MultDivContext multDiv() throws CaclulatorParserException {
         Integer val;
         switch (curToken.getName()) {
             case NUMBER:
             case LP:
             case MINUS:
             {
-                unaryContext first = unary();
-                powContContext rest = powCont();
+                UnaryContext first = unary();
+                PowContContext rest = powCont();
                 val = (int) Math.pow(first.val.doubleValue(), rest.val.doubleValue());
-                return new multDivContext(val, new NodeRule("multDiv", first.node, rest.node));
+                return new MultDivContext(val, new NodeRule("multDiv", first.node, rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: NUMBER or LP or MINUS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class multDivContContext {
+    static class MultDivContContext {
         private Integer val;
         private Node node;
     
-        multDivContContext(Integer returns, Node node) {
+        MultDivContContext(Integer returns, Node node) {
             this.node = node;
             this.val = returns;
         }
     
-        public Integer getval() {
+        public Integer getVal() {
             return val;
         }
     
@@ -223,7 +223,7 @@ public class CaclulatorParser {
         }
     }
 
-    public multDivContContext multDivCont(Integer acc) throws CaclulatorParserException {
+    public MultDivContContext multDivCont(Integer acc) throws CaclulatorParserException {
         Integer val;
         switch (curToken.getName()) {
             case EOF:
@@ -232,43 +232,43 @@ public class CaclulatorParser {
             case PLUS:
             {
                 val = acc;
-                return new multDivContContext(val, new NodeRule("multDivCont"));
+                return new MultDivContContext(val, new NodeRule("multDivCont"));
             }
             case DIV:
             {
                 CaclulatorLexer.Token d = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.DIV);
-                multDivContext first = multDiv();
+                MultDivContext first = multDiv();
                 Integer nextAcc = acc / first.val;
-                multDivContContext rest = multDivCont(nextAcc);
+                MultDivContContext rest = multDivCont(nextAcc);
                 val = rest.val;
-                return new multDivContContext(val, new NodeRule("multDivCont", first.node, rest.node));
+                return new MultDivContContext(val, new NodeRule("multDivCont", first.node, rest.node));
             }
             case MULT:
             {
                 CaclulatorLexer.Token m = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.MULT);
-                multDivContext first = multDiv();
+                MultDivContext first = multDiv();
                 Integer nextAcc = acc * first.val;
-                multDivContContext rest = multDivCont(nextAcc);
+                MultDivContContext rest = multDivCont(nextAcc);
                 val = rest.val;
-                return new multDivContContext(val, new NodeRule("multDivCont", first.node, rest.node));
+                return new MultDivContContext(val, new NodeRule("multDivCont", first.node, rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: DIV or MULT or EPS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class addSubContContext {
+    static class AddSubContContext {
         private Integer val;
         private Node node;
     
-        addSubContContext(Integer returns, Node node) {
+        AddSubContContext(Integer returns, Node node) {
             this.node = node;
             this.val = returns;
         }
     
-        public Integer getval() {
+        public Integer getVal() {
             return val;
         }
     
@@ -277,33 +277,33 @@ public class CaclulatorParser {
         }
     }
 
-    public addSubContContext addSubCont() throws CaclulatorParserException {
+    public AddSubContContext addSubCont() throws CaclulatorParserException {
         Integer val;
         switch (curToken.getName()) {
             case NUMBER:
             case LP:
             case MINUS:
             {
-                multDivContext first = multDiv();
-                multDivContContext rest = multDivCont(first.val);
+                MultDivContext first = multDiv();
+                MultDivContContext rest = multDivCont(first.val);
                 val = rest.val;
-                return new addSubContContext(val, new NodeRule("addSubCont", first.node, rest.node));
+                return new AddSubContContext(val, new NodeRule("addSubCont", first.node, rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: NUMBER or LP or MINUS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class addSubContext {
+    static class AddSubContext {
         private Integer val;
         private Node node;
     
-        addSubContext(Integer returns, Node node) {
+        AddSubContext(Integer returns, Node node) {
             this.node = node;
             this.val = returns;
         }
     
-        public Integer getval() {
+        public Integer getVal() {
             return val;
         }
     
@@ -312,50 +312,50 @@ public class CaclulatorParser {
         }
     }
 
-    public addSubContext addSub(Integer acc) throws CaclulatorParserException {
+    public AddSubContext addSub(Integer acc) throws CaclulatorParserException {
         Integer val;
         switch (curToken.getName()) {
             case EOF:
             case RP:
             {
                 val = acc;
-                return new addSubContext(val, new NodeRule("addSub"));
+                return new AddSubContext(val, new NodeRule("addSub"));
             }
             case MINUS:
             {
                 CaclulatorLexer.Token m = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.MINUS);
-                addSubContContext first = addSubCont();
+                AddSubContContext first = addSubCont();
                 Integer nextAcc = acc - first.val;
-                addSubContext rest = addSub(nextAcc);
+                AddSubContext rest = addSub(nextAcc);
                 val = rest.val;
-                return new addSubContext(val, new NodeRule("addSub", first.node, rest.node));
+                return new AddSubContext(val, new NodeRule("addSub", first.node, rest.node));
             }
             case PLUS:
             {
                 CaclulatorLexer.Token p = new CaclulatorLexer.Token(curToken);
                 consume(CaclulatorLexer.TokenType.PLUS);
-                addSubContContext first = addSubCont();
+                AddSubContContext first = addSubCont();
                 Integer nextAcc = acc + first.val;
-                addSubContext rest = addSub(nextAcc);
+                AddSubContext rest = addSub(nextAcc);
                 val = rest.val;
-                return new addSubContext(val, new NodeRule("addSub", first.node, rest.node));
+                return new AddSubContext(val, new NodeRule("addSub", first.node, rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: EPS or MINUS or PLUS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class startContext {
+    static class StartContext {
         private Integer res;
         private Node node;
     
-        startContext(Integer returns, Node node) {
+        StartContext(Integer returns, Node node) {
             this.node = node;
             this.res = returns;
         }
     
-        public Integer getres() {
+        public Integer getRes() {
             return res;
         }
     
@@ -364,17 +364,17 @@ public class CaclulatorParser {
         }
     }
 
-    public startContext start() throws CaclulatorParserException {
+    public StartContext start() throws CaclulatorParserException {
         Integer res;
         switch (curToken.getName()) {
             case NUMBER:
             case LP:
             case MINUS:
             {
-                addSubContContext first = addSubCont();
-                addSubContext rest = addSub(first.val);
+                AddSubContContext first = addSubCont();
+                AddSubContext rest = addSub(first.val);
                 res = rest.val;
-                return new startContext(res, new NodeRule("start", first.node, rest.node));
+                return new StartContext(res, new NodeRule("start", first.node, rest.node));
             }
             default:
                 throw new CaclulatorParserException("Expected: NUMBER or LP or MINUS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));

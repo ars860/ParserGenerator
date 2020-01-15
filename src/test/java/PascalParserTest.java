@@ -14,7 +14,7 @@ public class PascalParserTest extends Assert {
 //        }
 //    }
 
-    private PascalVarParser.startContext proceedString(String input) throws PascalVarParser.PascalVarParserException {
+    private PascalVarParser.StartContext proceedString(String input) throws PascalVarParser.PascalVarParserException {
         PascalVarLexer lexer = new PascalVarLexer(input);
         PascalVarParser parser = new PascalVarParser(lexer);
 

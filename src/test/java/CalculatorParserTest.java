@@ -15,7 +15,7 @@ public class CalculatorParserTest extends Assert {
 //        }
 //    }
 
-    private CaclulatorParser.startContext proceedString(String input) throws CaclulatorParser.CaclulatorParserException {
+    private CaclulatorParser.StartContext proceedString(String input) throws CaclulatorParser.CaclulatorParserException {
         CaclulatorLexer lexer = new CaclulatorLexer(input);
         CaclulatorParser parser = new CaclulatorParser(lexer);
 
@@ -23,7 +23,7 @@ public class CalculatorParserTest extends Assert {
     }
 
     private int getResult(String input) throws CaclulatorParser.CaclulatorParserException {
-        return proceedString(input).getres();
+        return proceedString(input).getRes();
     }
 
     @Test

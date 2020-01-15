@@ -74,10 +74,10 @@ public class PascalVarParser {
         nextToken();
     }
 
-    static class varContext {
+    static class VarContext {
         private Node node;
     
-        varContext(Node node) {
+        VarContext(Node node) {
             this.node = node;
         }
     
@@ -86,23 +86,23 @@ public class PascalVarParser {
         }
     }
 
-    public varContext var() throws PascalVarParserException {
+    public VarContext var() throws PascalVarParserException {
         switch (curToken.getName()) {
             case NAME:
             {
                 PascalVarLexer.Token n = new PascalVarLexer.Token(curToken);
                 consume(PascalVarLexer.TokenType.NAME);
-                return new varContext( new NodeRule("var", new NodeToken(n)));
+                return new VarContext( new NodeRule("var", new NodeToken(n)));
             }
             default:
                 throw new PascalVarParserException("Expected: NAME, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class varsContext {
+    static class VarsContext {
         private Node node;
     
-        varsContext(Node node) {
+        VarsContext(Node node) {
             this.node = node;
         }
     
@@ -111,29 +111,29 @@ public class PascalVarParser {
         }
     }
 
-    public varsContext vars() throws PascalVarParserException {
+    public VarsContext vars() throws PascalVarParserException {
         switch (curToken.getName()) {
             case COLON:
             {
-                return new varsContext( new NodeRule("vars"));
+                return new VarsContext( new NodeRule("vars"));
             }
             case COMMA:
             {
                 PascalVarLexer.Token c = new PascalVarLexer.Token(curToken);
                 consume(PascalVarLexer.TokenType.COMMA);
-                varContext v = var();
-                varsContext vv = vars();
-                return new varsContext( new NodeRule("vars", v.node, vv.node));
+                VarContext v = var();
+                VarsContext vv = vars();
+                return new VarsContext( new NodeRule("vars", v.node, vv.node));
             }
             default:
                 throw new PascalVarParserException("Expected: COMMA or EPS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class typeContext {
+    static class TypeContext {
         private Node node;
     
-        typeContext(Node node) {
+        TypeContext(Node node) {
             this.node = node;
         }
     
@@ -142,23 +142,23 @@ public class PascalVarParser {
         }
     }
 
-    public typeContext type() throws PascalVarParserException {
+    public TypeContext type() throws PascalVarParserException {
         switch (curToken.getName()) {
             case NAME:
             {
                 PascalVarLexer.Token n = new PascalVarLexer.Token(curToken);
                 consume(PascalVarLexer.TokenType.NAME);
-                return new typeContext( new NodeRule("type", new NodeToken(n)));
+                return new TypeContext( new NodeRule("type", new NodeToken(n)));
             }
             default:
                 throw new PascalVarParserException("Expected: NAME, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class declContext {
+    static class DeclContext {
         private Node node;
     
-        declContext(Node node) {
+        DeclContext(Node node) {
             this.node = node;
         }
     
@@ -167,28 +167,28 @@ public class PascalVarParser {
         }
     }
 
-    public declContext decl() throws PascalVarParserException {
+    public DeclContext decl() throws PascalVarParserException {
         switch (curToken.getName()) {
             case NAME:
             {
-                varContext v = var();
-                varsContext list = vars();
+                VarContext v = var();
+                VarsContext list = vars();
                 PascalVarLexer.Token c = new PascalVarLexer.Token(curToken);
                 consume(PascalVarLexer.TokenType.COLON);
-                typeContext t = type();
+                TypeContext t = type();
                 PascalVarLexer.Token s = new PascalVarLexer.Token(curToken);
                 consume(PascalVarLexer.TokenType.SEMICOLON);
-                return new declContext( new NodeRule("decl", v.node, list.node, t.node));
+                return new DeclContext( new NodeRule("decl", v.node, list.node, t.node));
             }
             default:
                 throw new PascalVarParserException("Expected: NAME, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class declsContext {
+    static class DeclsContext {
         private Node node;
     
-        declsContext(Node node) {
+        DeclsContext(Node node) {
             this.node = node;
         }
     
@@ -197,27 +197,27 @@ public class PascalVarParser {
         }
     }
 
-    public declsContext decls() throws PascalVarParserException {
+    public DeclsContext decls() throws PascalVarParserException {
         switch (curToken.getName()) {
             case EOF:
             {
-                return new declsContext( new NodeRule("decls"));
+                return new DeclsContext( new NodeRule("decls"));
             }
             case NAME:
             {
-                declContext d = decl();
-                declsContext rest = decls();
-                return new declsContext( new NodeRule("decls", d.node, rest.node));
+                DeclContext d = decl();
+                DeclsContext rest = decls();
+                return new DeclsContext( new NodeRule("decls", d.node, rest.node));
             }
             default:
                 throw new PascalVarParserException("Expected: EPS or NAME, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class startContext {
+    static class StartContext {
         private Node node;
     
-        startContext(Node node) {
+        StartContext(Node node) {
             this.node = node;
         }
     
@@ -226,14 +226,14 @@ public class PascalVarParser {
         }
     }
 
-    public startContext start() throws PascalVarParserException {
+    public StartContext start() throws PascalVarParserException {
         switch (curToken.getName()) {
             case VAR:
             {
                 PascalVarLexer.Token v = new PascalVarLexer.Token(curToken);
                 consume(PascalVarLexer.TokenType.VAR);
-                declsContext list = decls();
-                return new startContext( new NodeRule("start", list.node));
+                DeclsContext list = decls();
+                return new StartContext( new NodeRule("start", list.node));
             }
             default:
                 throw new PascalVarParserException("Expected: VAR, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));

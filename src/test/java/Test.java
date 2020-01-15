@@ -17,23 +17,7 @@ import java.nio.file.Path;
 
 
 public class Test {
-    public static Grammar parse(String testString) {
-        CharStream stream = CharStreams.fromString(testString);
-
-        RulesLexer exprLexer = new RulesLexer(stream);
-        CommonTokenStream commonTokenStream = new CommonTokenStream(exprLexer);
-
-        RulesParser exprParser = new RulesParser(commonTokenStream);
-
-        return exprParser.start().grammar;
-    }
-
-    public static void main(String[] args) throws GrammarException, IOException, GrammarParsingException {
-//        Path inPath = Path.of("src/test/grammars/calculator.grammar");
-//        Path inPath = Path.of("src/test/grammars/pascalVar.grammar");
-        Path inPath = Path.of("src/test/grammars/epsilonRules.grammar");
-        Path outPath = Path.of("src/test/java");
-
+    private static void generateParser(Path inPath, Path outPath) throws IOException, GrammarParsingException, GrammarException {
         Grammar grammar = AntlrGrammarParser.getGrammarFromFile(inPath);
         grammar.init();
         Files.createDirectories(outPath);
@@ -47,7 +31,16 @@ public class Test {
         lexerGenerator.generateLexer();
         ParserGenerator parserGenerator = new ParserGenerator(grammar, outPath.resolve(grammar.getGrammarName() + "Parser.java"));
         parserGenerator.generateParser();
-        int x = 123 + 123;
-//        int x = 123 + 123;
+    }
+
+    public static void main(String[] args) throws GrammarException, IOException, GrammarParsingException {
+//        Path inPath = Path.of("src/test/grammars/calculator.grammar");
+//        Path inPath = Path.of("src/test/grammars/pascalVar.grammar");
+//        Path inPath = Path.of("src/test/grammars/epsilonRules.grammar");
+        Path outPath = Path.of("src/test/java");
+
+        generateParser(Path.of("src/test/grammars/calculator.grammar"), outPath);
+        generateParser(Path.of("src/test/grammars/pascalVar.grammar"), outPath);
+        generateParser(Path.of("src/test/grammars/epsilonRules.grammar"), outPath);
     }
 }

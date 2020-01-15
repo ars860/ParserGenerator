@@ -125,22 +125,26 @@ public class ParserGenerator extends Generator {
         writer.close();
     }
 
+    private String getContextName(String ruleName) {
+        return ruleName.substring(0,1).toUpperCase() + ruleName.substring(1) + "Context";
+    }
+
     public void generateRule(Rule rule) throws IOException, GrammarException {
         Rule.Argument returns = rule.getReturns();
 
         //  Context
         if (returns != null) {
             writeStrings(1,
-                    "static class " + rule.getName() + "Context {",
+                    "static class " + getContextName(rule.getName()) + " {",
                     "    private " + returns.getType() + " " + returns.getName() + ";",
                     "    private Node node;",
                     "",
-                    "    " + rule.getName() + "Context(" + returns.getType() + " returns, Node node) {",
+                    "    " + getContextName(rule.getName()) + "(" + returns.getType() + " returns, Node node) {",
                     "        this.node = node;",
                     "        this." + returns.getName() + " = returns;",
                     "    }",
                     "",
-                    "    public " + returns.getType() + " get" + returns.getName() + "() {",
+                    "    public " + returns.getType() + " get" + returns.getName().substring(0,1).toUpperCase() + returns.getName().substring(1) + "() {",
                     "        return " + returns.getName() + ";",
                     "    }",
                     "",
@@ -150,10 +154,10 @@ public class ParserGenerator extends Generator {
                     "}");
         } else {
             writeStrings(1,
-                    "static class " + rule.getName() + "Context {",
+                    "static class " + getContextName(rule.getName()) + " {",
                     "    private Node node;",
                     "",
-                    "    " + rule.getName() + "Context(Node node) {",
+                    "    " + getContextName(rule.getName()) + "(Node node) {",
                     "        this.node = node;",
                     "    }",
                     "",
@@ -165,7 +169,7 @@ public class ParserGenerator extends Generator {
         writeln();
 
         writeString(
-                "public " + rule.getName() + "Context " + rule.getName() + "(" +
+                "public " + getContextName(rule.getName()) + " " + rule.getName() + "(" +
                         rule.getArguments().stream().map((argument) -> argument.getType() + " " + argument.getName()).collect(Collectors.joining(",")) + ") throws " + getName() + "ParserException {",
                 1);
 
@@ -222,7 +226,7 @@ public class ParserGenerator extends Generator {
                     case RULE: {
                         RuleInv ruleInv = (RuleInv) atom;
                         returnList.add(ruleInv.getNewName() + ".node");
-                        writeString(ruleInv.getRuleName() + "Context " + ruleInv.getNewName() + " = " + ruleInv.getRuleName() + "(" + String.join(", ", ruleInv.getArguments()) + ");", 4);
+                        writeString(getContextName(ruleInv.getRuleName()) + " " + ruleInv.getNewName() + " = " + ruleInv.getRuleName() + "(" + String.join(", ", ruleInv.getArguments()) + ");", 4);
                         break;
                     }
                 }
@@ -230,9 +234,9 @@ public class ParserGenerator extends Generator {
 
             String returnString = String.join(", ", returnList);
             if (returns != null) {
-                writeString("return new " + rule.getName() + "Context(" + returns.getName() + ", new NodeRule(\"" + rule.getName() + "\"" + (returnString.length() > 0 ? ", " : "") + returnString + "));", 4);
+                writeString("return new " + getContextName(rule.getName()) + "(" + returns.getName() + ", new NodeRule(\"" + rule.getName() + "\"" + (returnString.length() > 0 ? ", " : "") + returnString + "));", 4);
             } else {
-                writeString("return new " + rule.getName() + "Context( new NodeRule(\"" + rule.getName() + "\"" + (returnString.length() > 0 ? ", " : "") + returnString + "));", 4);
+                writeString("return new " + getContextName(rule.getName()) + "( new NodeRule(\"" + rule.getName() + "\"" + (returnString.length() > 0 ? ", " : "") + returnString + "));", 4);
             }
             writeString("}", 3);
         }

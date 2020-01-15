@@ -74,16 +74,16 @@ public class EpsilonTestParser {
         nextToken();
     }
 
-    static class eps3Context {
+    static class Eps3Context {
         private Set<String> res;
         private Node node;
     
-        eps3Context(Set<String> returns, Node node) {
+        Eps3Context(Set<String> returns, Node node) {
             this.node = node;
             this.res = returns;
         }
     
-        public Set<String> getres() {
+        public Set<String> getRes() {
             return res;
         }
     
@@ -92,36 +92,36 @@ public class EpsilonTestParser {
         }
     }
 
-    public eps3Context eps3() throws EpsilonTestParserException {
+    public Eps3Context eps3() throws EpsilonTestParserException {
         Set<String> res;
         switch (curToken.getName()) {
             case EOF:
             {
                 res = new HashSet<>();
-                return new eps3Context(res, new NodeRule("eps3"));
+                return new Eps3Context(res, new NodeRule("eps3"));
             }
             case Z:
             {
                 EpsilonTestLexer.Token z = new EpsilonTestLexer.Token(curToken);
                 consume(EpsilonTestLexer.TokenType.Z);
                 res = Collections.singleton(z.getText());
-                return new eps3Context(res, new NodeRule("eps3"));
+                return new Eps3Context(res, new NodeRule("eps3"));
             }
             default:
                 throw new EpsilonTestParserException("Expected: EPS or Z, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class eps2Context {
+    static class Eps2Context {
         private Set<String> res;
         private Node node;
     
-        eps2Context(Set<String> returns, Node node) {
+        Eps2Context(Set<String> returns, Node node) {
             this.node = node;
             this.res = returns;
         }
     
-        public Set<String> getres() {
+        public Set<String> getRes() {
             return res;
         }
     
@@ -130,37 +130,37 @@ public class EpsilonTestParser {
         }
     }
 
-    public eps2Context eps2() throws EpsilonTestParserException {
+    public Eps2Context eps2() throws EpsilonTestParserException {
         Set<String> res;
         switch (curToken.getName()) {
             case Z:
             case EOF:
             {
                 res = new HashSet<>();
-                return new eps2Context(res, new NodeRule("eps2"));
+                return new Eps2Context(res, new NodeRule("eps2"));
             }
             case Y:
             {
                 EpsilonTestLexer.Token y = new EpsilonTestLexer.Token(curToken);
                 consume(EpsilonTestLexer.TokenType.Y);
                 res = Collections.singleton(y.getText());
-                return new eps2Context(res, new NodeRule("eps2"));
+                return new Eps2Context(res, new NodeRule("eps2"));
             }
             default:
                 throw new EpsilonTestParserException("Expected: EPS or Y, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class eps1Context {
+    static class Eps1Context {
         private Set<String> res;
         private Node node;
     
-        eps1Context(Set<String> returns, Node node) {
+        Eps1Context(Set<String> returns, Node node) {
             this.node = node;
             this.res = returns;
         }
     
-        public Set<String> getres() {
+        public Set<String> getRes() {
             return res;
         }
     
@@ -169,37 +169,37 @@ public class EpsilonTestParser {
         }
     }
 
-    public eps1Context eps1() throws EpsilonTestParserException {
+    public Eps1Context eps1() throws EpsilonTestParserException {
         Set<String> res;
         switch (curToken.getName()) {
             case Y:
             case EOF:
             {
                 res = new HashSet<>();
-                return new eps1Context(res, new NodeRule("eps1"));
+                return new Eps1Context(res, new NodeRule("eps1"));
             }
             case X:
             {
                 EpsilonTestLexer.Token x = new EpsilonTestLexer.Token(curToken);
                 consume(EpsilonTestLexer.TokenType.X);
                 res = Collections.singleton(x.getText());
-                return new eps1Context(res, new NodeRule("eps1"));
+                return new Eps1Context(res, new NodeRule("eps1"));
             }
             default:
                 throw new EpsilonTestParserException("Expected: X or EPS, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
         }
     }
 
-    static class startContext {
+    static class StartContext {
         private Set<String> letters;
         private Node node;
     
-        startContext(Set<String> returns, Node node) {
+        StartContext(Set<String> returns, Node node) {
             this.node = node;
             this.letters = returns;
         }
     
-        public Set<String> getletters() {
+        public Set<String> getLetters() {
             return letters;
         }
     
@@ -208,19 +208,19 @@ public class EpsilonTestParser {
         }
     }
 
-    public startContext start() throws EpsilonTestParserException {
+    public StartContext start() throws EpsilonTestParserException {
         Set<String> letters;
         switch (curToken.getName()) {
-            case EOF:
             case X:
             case Y:
             case Z:
+            case EOF:
             {
-                eps1Context e1 = eps1();
-                eps2Context e2 = eps2();
-                eps3Context e3 = eps3();
+                Eps1Context e1 = eps1();
+                Eps2Context e2 = eps2();
+                Eps3Context e3 = eps3();
                 letters = new HashSet<>(); letters.addAll(e1.res); letters.addAll(e2.res); letters.addAll(e3.res);
-                return new startContext(letters, new NodeRule("start", e1.node, e2.node, e3.node));
+                return new StartContext(letters, new NodeRule("start", e1.node, e2.node, e3.node));
             }
             default:
                 throw new EpsilonTestParserException("Expected: X or EPS or Y or Z, got: " + curToken.getName().name() + ", at: ..." + curToken.getText() + lexer.getInput().substring(0, Math.min(10, lexer.getInput().length())) + (lexer.getInput().length() > 10 ? "..." : ""));
