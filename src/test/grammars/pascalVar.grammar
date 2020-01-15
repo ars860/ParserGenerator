@@ -1,0 +1,41 @@
+grammar PascalVar;
+
+@skip (
+    WS : "[ \t\n\r]+";
+)
+
+@keepInTree (
+    NAME
+)
+
+start
+    : v=VAR list=decls
+    ;
+
+decls
+    : d=decl rest=decls
+    |
+    ;
+
+decl
+    : v=var list=vars c=COLON t=type s=SEMICOLON
+    ;
+
+type
+   : n=NAME
+   ;
+
+vars
+   : c=COMMA v=var vv=vars
+   |
+   ;
+
+var
+  : n=NAME
+  ;
+
+VAR : "var";
+COLON : "[:]";
+SEMICOLON : "[;]";
+COMMA : "[,]";
+NAME : "[a-zA-Z][a-zA-Z0-9_]*";

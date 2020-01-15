@@ -1,0 +1,32 @@
+grammar EpsilonTest;
+
+@header {
+import java.util.*;
+}
+
+@skip (
+    WS : "[ \t\n\r]+";
+)
+
+start returns [Set<String> letters]
+    : e1=eps1 e2=eps2 e3=eps3 {letters = new HashSet<>(); letters.addAll(e1.res); letters.addAll(e2.res); letters.addAll(e3.res);}
+    ;
+
+eps1 returns [Set<String> res]
+   : x=X {res = Collections.singleton(x.getText());}
+   | {res = new HashSet<>();}
+   ;
+
+eps2 returns [Set<String> res]
+   : y=Y {res = Collections.singleton(y.getText());}
+   | {res = new HashSet<>();}
+   ;
+
+eps3 returns [Set<String> res]
+   : z=Z {res = Collections.singleton(z.getText());}
+   | {res = new HashSet<>();}
+   ;
+
+X : "x";
+Y : "y";
+Z : "z";

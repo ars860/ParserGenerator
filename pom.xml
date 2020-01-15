@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>second</groupId>
-    <artifactId>second</artifactId>
+    <groupId>hw-4</groupId>
+    <artifactId>hw-4</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -20,7 +20,12 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.4.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -29,29 +34,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <artifactId>maven-myquery-plugin</artifactId>-->
-<!--                <version>1.0</version>-->
-<!--                <configuration>-->
-<!--                    <url>http://www.foobar.com/query</url>-->
-<!--                    <timeout>10</timeout>-->
-<!--                    <options>-->
-<!--                        <option>one</option>-->
-<!--                        <option>two</option>-->
-<!--                        <option>three</option>-->
-<!--                    </options>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
 
 </project>

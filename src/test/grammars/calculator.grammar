@@ -1,0 +1,57 @@
+grammar Caclulator;
+
+@header {
+//just some text to test @header
+}
+
+@skip (
+    WS : "[ \t\n\r]+";
+)
+
+@keepInTree (
+    NUMBER
+)
+
+start returns [Integer res]
+: first=addSubCont rest=addSub[first.val] {res = rest.val;}
+;
+
+addSub[Integer acc] returns [Integer val]
+: p=PLUS first=addSubCont {Integer nextAcc = acc + first.val;} rest=addSub[nextAcc] {val = rest.val;}
+| m=MINUS first=addSubCont {Integer nextAcc = acc - first.val;} rest=addSub[nextAcc] {val = rest.val;}
+| {val = acc;}
+;
+
+addSubCont returns [Integer val]
+: first=multDiv rest=multDivCont[first.val] {val = rest.val;}
+;
+
+multDivCont[Integer acc] returns [Integer val]
+: m=MULT first=multDiv {Integer nextAcc = acc * first.val;} rest=multDivCont[nextAcc] {val = rest.val;}
+| d=DIV first=multDiv {Integer nextAcc = acc / first.val;} rest=multDivCont[nextAcc] {val = rest.val;}
+| {val = acc;}
+;
+
+multDiv returns [Integer val]
+: first=unary rest=powCont {val = (int) Math.pow(first.val.doubleValue(), rest.val.doubleValue());}
+;
+
+powCont returns [Integer val]
+: p=POW first=unary rest=powCont {val = (int) Math.pow(first.val.doubleValue(), rest.val.doubleValue());}
+| {val = 1;}
+;
+
+unary returns [Integer val]
+: m=MINUS rest=unary {val = -1 * rest.val;}
+|  num=NUMBER {val = Integer.valueOf(num.getText());}
+|  l=LP mid=start r=RP {val = mid.res;}
+;
+    
+NUMBER : "[1-9][0-9]*";
+PLUS : "[+]";
+MINUS : "[-]";
+MULT : "[*]";
+DIV  : "[/]";
+POW :   "[\\^]";
+LP :   "[(]";
+RP :   "[)]";
